@@ -1,0 +1,1163 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tableau de Bord de Veille Technologique .NET - Nour Diallo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .header {
+            background: linear-gradient(135deg, #512DA8 0%, #673AB7 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .student-info {
+            background: #f8f9fa;
+            padding: 20px 40px;
+            border-bottom: 3px solid #512DA8;
+        }
+
+        .student-info p {
+            margin: 5px 0;
+            font-size: 1.1em;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .section {
+            margin-bottom: 50px;
+        }
+
+        .section-title {
+            font-size: 1.8em;
+            color: #512DA8;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #673AB7;
+            display: flex;
+            align-items: center;
+        }
+
+        .section-title::before {
+            content: "📊";
+            margin-right: 15px;
+            font-size: 1.2em;
+        }
+
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .tech-card {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 25px;
+            border-radius: 15px;
+            border-left: 5px solid #512DA8;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .tech-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        .tech-card h3 {
+            color: #512DA8;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .tech-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .tech-card li {
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(81, 45, 168, 0.1);
+            color: #555;
+        }
+
+        .tech-card li:last-child {
+            border-bottom: none;
+        }
+
+        .tech-card li::before {
+            content: "▸";
+            color: #512DA8;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .sources-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .sources-table thead {
+            background: linear-gradient(135deg, #512DA8 0%, #673AB7 100%);
+            color: white;
+        }
+
+        .sources-table th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .sources-table tbody tr {
+            background: white;
+            transition: background 0.3s;
+        }
+
+        .sources-table tbody tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        .sources-table tbody tr:hover {
+            background: #e8eaf6;
+        }
+
+        .sources-table td {
+            padding: 15px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .source-link {
+            color: #512DA8;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s;
+        }
+
+        .source-link:hover {
+            color: #673AB7;
+            text-decoration: underline;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin: 2px;
+        }
+
+        .badge-high {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .badge-medium {
+            background: #FF9800;
+            color: white;
+        }
+
+        .badge-official {
+            background: #2196F3;
+            color: white;
+        }
+
+        .badge-community {
+            background: #9C27B0;
+            color: white;
+        }
+
+        .influencers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .influencer-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            border-top: 4px solid #512DA8;
+        }
+
+        .influencer-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .influencer-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .influencer-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-right: 15px;
+        }
+
+        .influencer-info h4 {
+            color: #512DA8;
+            margin-bottom: 5px;
+        }
+
+        .influencer-info p {
+            color: #777;
+            font-size: 0.9em;
+        }
+
+        .influencer-specialties {
+            margin-top: 15px;
+        }
+
+        .specialty-tag {
+            display: inline-block;
+            background: #e8eaf6;
+            color: #512DA8;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.85em;
+            margin: 3px;
+        }
+
+        .criteria-box {
+            background: #fff3e0;
+            border-left: 5px solid #FF9800;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .criteria-box h3 {
+            color: #E65100;
+            margin-bottom: 15px;
+        }
+
+        .criteria-box ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .criteria-box li {
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(230, 81, 0, 0.1);
+            color: #555;
+        }
+
+        .criteria-box li:last-child {
+            border-bottom: none;
+        }
+
+        .criteria-box li::before {
+            content: "✓";
+            color: #FF9800;
+            font-weight: bold;
+            margin-right: 10px;
+            font-size: 1.2em;
+        }
+
+        .dashboard-summary {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            padding: 30px;
+            border-radius: 15px;
+            margin-top: 20px;
+        }
+
+        .summary-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #512DA8;
+        }
+
+        .stat-label {
+            color: #777;
+            margin-top: 10px;
+            font-size: 0.9em;
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            
+            .container {
+                box-shadow: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+            
+            .tech-grid, .influencers-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎯 Tableau de Bord de Veille Technologique</h1>
+            <p>Écosystème .NET et Développement Logiciel</p>
+        </div>
+
+        <div class="student-info">
+            <p><strong>Étudiant :</strong> Nour Diallo</p>
+            <p><strong>Formation :</strong> Master Génie Logiciel et Systèmes d'Information</p>
+            <p><strong>Date :</strong> Janvier 2026</p>
+        </div>
+
+        <div class="content">
+            <!-- Section 1: Technologies et Thématiques -->
+            <div class="section">
+                <h2 class="section-title">Technologies et Thématiques à Suivre</h2>
+                
+                <div class="tech-grid">
+                    <div class="tech-card">
+                        <h3>🔷 Écosystème .NET</h3>
+                        <ul>
+                            <li>.NET 8 / .NET 9 et versions futures</li>
+                            <li>C# 12 et nouvelles fonctionnalités</li>
+                            <li>ASP.NET Core (Web API, MVC, Blazor)</li>
+                            <li>Entity Framework Core</li>
+                            <li>MAUI (Multi-platform App UI)</li>
+                            <li>Minimal APIs</li>
+                        </ul>
+                    </div>
+
+                    <div class="tech-card">
+                        <h3>🏗️ Architecture & Patterns</h3>
+                        <ul>
+                            <li>Clean Architecture</li>
+                            <li>Microservices avec .NET</li>
+                            <li>Domain-Driven Design (DDD)</li>
+                            <li>CQRS et Event Sourcing</li>
+                            <li>Design Patterns modernes</li>
+                            <li>Vertical Slice Architecture</li>
+                        </ul>
+                    </div>
+
+                    <div class="tech-card">
+                        <h3>☁️ Cloud & DevOps</h3>
+                        <ul>
+                            <li>Azure (App Service, Functions, AKS)</li>
+                            <li>Containers Docker & Kubernetes</li>
+                            <li>CI/CD avec GitHub Actions / Azure DevOps</li>
+                            <li>Infrastructure as Code (Terraform)</li>
+                            <li>Serverless avec Azure Functions</li>
+                            <li>Monitoring et observabilité</li>
+                        </ul>
+                    </div>
+
+                    <div class="tech-card">
+                        <h3>🗄️ Bases de Données</h3>
+                        <ul>
+                            <li>SQL Server et optimisations</li>
+                            <li>PostgreSQL avec .NET</li>
+                            <li>NoSQL (MongoDB, CosmosDB)</li>
+                            <li>Redis pour le caching</li>
+                            <li>Migrations et versioning</li>
+                            <li>Performance tuning</li>
+                        </ul>
+                    </div>
+
+                    <div class="tech-card">
+                        <h3>🔐 Sécurité</h3>
+                        <ul>
+                            <li>Authentication & Authorization</li>
+                            <li>OAuth 2.0 / OpenID Connect</li>
+                            <li>Identity Server / Duende</li>
+                            <li>JWT et sécurité API</li>
+                            <li>OWASP Top 10</li>
+                            <li>Cryptographie avec .NET</li>
+                        </ul>
+                    </div>
+
+                    <div class="tech-card">
+                        <h3>⚡ Performance & Testing</h3>
+                        <ul>
+                            <li>Benchmarking avec BenchmarkDotNet</li>
+                            <li>xUnit, NUnit, MSTest</li>
+                            <li>Integration Testing</li>
+                            <li>Test-Driven Development (TDD)</li>
+                            <li>Profiling et optimisation</li>
+                            <li>Load testing</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 2: Critères de Pertinence -->
+            <div class="section">
+                <h2 class="section-title">Critères de Sélection des Sources</h2>
+                
+                <div class="criteria-box">
+                    <h3>📋 Critères de Pertinence</h3>
+                    <ul>
+                        <li><strong>Fiabilité :</strong> Sources officielles (Microsoft, .NET Foundation) ou reconnues par la communauté</li>
+                        <li><strong>Actualité :</strong> Mises à jour régulières (au moins hebdomadaires)</li>
+                        <li><strong>Expertise :</strong> Auteurs reconnus (MVPs, Microsoft employees, leaders d'opinion)</li>
+                        <li><strong>Profondeur technique :</strong> Contenu allant au-delà des tutoriels basiques</li>
+                        <li><strong>Diversité :</strong> Couverture de différents aspects (théorie, pratique, actualités)</li>
+                        <li><strong>Accessibilité :</strong> Contenu gratuit ou accessible (RSS, newsletters)</li>
+                        <li><strong>Langue :</strong> Principalement anglais (langue de référence en tech)</li>
+                        <li><strong>Format :</strong> Articles, vidéos, podcasts, documentation</li>
+                    </ul>
+                </div>
+
+                <div class="dashboard-summary">
+                    <h3 style="color: #1565C0; margin-bottom: 15px;">📊 Résumé du Tableau de Bord</h3>
+                    <div class="summary-stats">
+                        <div class="stat-card">
+                            <div class="stat-number">25</div>
+                            <div class="stat-label">Sources d'information</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">15</div>
+                            <div class="stat-label">Influenceurs suivis</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">6</div>
+                            <div class="stat-label">Thématiques couvertes</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">100%</div>
+                            <div class="stat-label">Automatisation</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 3: Sources d'Information -->
+            <div class="section">
+                <h2 class="section-title">Sources d'Information Sélectionnées</h2>
+                
+                <table class="sources-table">
+                    <thead>
+                        <tr>
+                            <th>Source</th>
+                            <th>Type</th>
+                            <th>Fréquence</th>
+                            <th>Spécialité</th>
+                            <th>Priorité</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><a href="https://devblogs.microsoft.com/dotnet/" class="source-link" target="_blank">.NET Blog (Microsoft)</a></td>
+                            <td><span class="badge badge-official">Officiel</span></td>
+                            <td>Hebdomadaire</td>
+                            <td>Annonces .NET, nouveautés</td>
+                            <td><span class="badge badge-high">Haute</span></td>
+                        </tr>
+                        <tr>
+                            <td><a href="https://docs.microsoft.com/en-us/dotnet/" class="source-link" target="_blank">Microsoft Docs .NET</a></td>
+                            <td><span class="badge badge-official">Documentation</span></td>
+                            <td>Continue</td>
+                            <td>Documentation technique</td>
+                            <td><span class="badge badge-high">Haute</span></td>
+                        </tr>
+                        <tr>
+                            <td><a href="https://www.dotnetfoundation.org/blog" class="source-link" target="_blank">.NET Foundation Blog</a></td>
+                            <td><span class="badge badge-official">Officiel</span></td>
+                            <td>Mensuelle</td>
+                            <td>Communauté, projets OSS</td>
+                            <td><span class="badge badge-high">Haute</span></td>
+                        </tr>
+                        <tr>
+                            <td><a href="https://learn.microsoft.com/en-us/shows/on-dotnet/" class="source-link" target="_blank">On .NET (YouTube)</a></td>
+                            <td><span class="badge badge-official">Vidéo</span></td>
+                            <td>Hebdomadaire</td>
+                            <td>Interviews, démos</td>
+                            <td><span class="badge badge-high">Haute</span></td>
+                        </tr>
+                        <tr>
+                            <td><a href="https://www.hanselman.com/blog" class="source-link" target="_blank">Scott Hanselman Blog</a></td>
+                            <td><span class="badge badge-community">Communauté</span></td>
+                            <td>Hebdomadaire</td>
+                            <td>.NET, Azure, productivité</td>
+                            <td><span class="badge badge-high">Haute</span></td>
+                        </tr>
+                        <tr>
+                            <td><a href="https://blog.jetbrains.com/dotnet/" class="source-link" target="_blank">JetBrains .NET Blog</a></td>
+                            <td><span class="badge badge-community">Entreprise</span></td>
+                            <td>Hebdomadaire</td>
+                            <td>Rider, ReSharper, .NET</td>
+                            <td><span class="badge badge-high">Haute</span></td>
+                        </tr>
+                        <tr>
+                            <td><a href="https://www.youtube.com/c/dotNET" class="source-link" target="_blank">.NET YouTube Channel</a></td>
+                            <td><span class="badge badge-official">Vidéo</span></td>
+                            <td>Quotidienne</td>
+                            <td>Tutoriels, conférences</td>
+                            <td><span class="badge badge-high">Haute</span></td>
+                        </tr>
+                        <tr>
+                            <td><a href="https://www.reddit.com/r/dotnet/" class="source-link" target="_blank">Reddit r/dotnet</a></td>
+                            <td><span class="badge badge-community">Forum</span></td>
+                            <td>Quotidienne</td>
+                            <td>Discussions, Q&A</td>
+                            <td><span class="badge badge-medium">Moyenne</span></td>
+                        </tr>
+                        <tr>
+                            <td><a href="https://stackoverflow.com/questions/tagged/.net" class="source-link" target="_blank">StackOverflow .NET</a></td>
+                            <td><span class="badge badge-community">Q&A</span></td>
+                            <td>Quotidienne</td>
+                            <td>Problèmes techniques</td>
+                            <td><span class="badge badge-medium">Moyenne</span></td>
+                        </tr>
+                        <tr>
+                            <td><a href="https://weekly.dotnetcore.xyz/" class="source-link" target="_blank">.NET Weekly</a></td>
+                            <td><span class="badge badge-community">Newsletter</span></td>
+                            <td>Hebdomadaire</td>
+                            <td>Curation actualités .NET</td>
+                            <td><span class="badge badge-high">Haute</span></td>
+                        </tr>
+                        <tr>
+                            <td><a href="https://andrewlock.net/" class="source-link" target="_blank">Andrew Lock Blog</a></td>
+                            <td><span class="badge badge-community">Blog</span></td>
+                            <td>Hebdomadaire</td>
+                            <td>ASP.NET Core deep dives</td>
+                            <td><span class="badge badge-high">Haute</span></td>
+                        </tr>
+                        <tr>
+                            <td><a href="https://blog.stephencleary.com/" class="source-link" target="_blank">Stephen Cleary Blog</a></td>
+                            <td><span class="badge badge-community">Blog</span></td>
+                            <td>Mensuelle</td>
+                            <td>Async/Await, concurrence</td>
+                            <td><span class="badge badge-medium">Moyenne</span></td>
+                        </tr>
+                        <tr>
+                            <td><a href="https://www.infoq.com/dotnet/" class="source-link" target="_blank">InfoQ .NET</a></td>
+                            <td><span class="badge badge-community">Actualités</span></td>
+                            <td>Quotidienne</td>
+                            <td>Actualités, articles</td>
+                            <td><span class="badge badge-medium">Moyenne</span></td>
+                        </tr>
+                        <tr>
+                            <td><a href="https://www.meziantou.net/" class="source-link" target="_blank">Meziantou's Blog</a></td>
+                            <td><span class="badge badge-community">Blog</span></td>
+                            <td>Hebdomadaire</td>
+                            <td>Tips & tricks .NET</td>
+                            <td><span class="badge badge-medium">Moyenne</span></td>
+                        </tr>
+                        <tr>
+                            <td><a href="https://channel9.msdn.com/" class="source-link" target="_blank">Microsoft Channel 9</a></td>
+                            <td><span class="badge badge-official">Vidéo</span></td>
+                            <td>Hebdomadaire</td>
+                            <td>Conférences, tutoriels</td>
+                            <td><span class="badge badge-medium">Moyenne</span></td>
+                        </tr>
+                        <tr>
+                            <td><a href="https://github.com/trending/c%23" class="source-link" target="_blank">GitHub Trending C#</a></td>
+                            <td><span class="badge badge-community">Code</span></td>
+                            <td>Quotidienne</td>
+                            <td>Projets open source</td>
+                            <td><span class="badge badge-high">Haute</span></td>
+                        </tr>
+                        <tr>
+                            <td><a href="https://dotnetcore.show/" class="source-link" target="_blank">The .NET Core Podcast</a></td>
+                            <td><span class="badge badge-community">Podcast</span></td>
+                            <td>Hebdomadaire</td>
+                            <td>Interviews, discussions</td>
+                            <td><span class="badge badge-medium">Moyenne</span></td>
+                        </tr>
+                        <tr>
+                            <td><a href="https://www.linkedin.com/groups/3788647/" class="source-link" target="_blank">LinkedIn .NET Developers Group</a></td>
+                            <td><span class="badge badge-community">Réseau</span></td>
+                            <td>Quotidienne</td>
+                            <td>Networking, emploi</td>
+                            <td><span class="badge badge-medium">Moyenne</span></td>
+                        </tr>
+                        <tr>
+                            <td><a href="https://codeopinion.com/" class="source-link" target="_blank">CodeOpinion (Derek Comartin)</a></td>
+                            <td><span class="badge badge-community">Blog/YouTube</span></td>
+                            <td>Hebdomadaire</td>
+                            <td>Architecture, patterns</td>
+                            <td><span class="badge badge-high">Haute</span></td>
+                        </tr>
+                        <tr>
+                            <td><a href="https://enterprisecraftsmanship.com/" class="source-link" target="_blank">Enterprise Craftsmanship</a></td>
+                            <td><span class="badge badge-community">Blog</span></td>
+                            <td>Mensuelle</td>
+                            <td>DDD, Clean Code</td>
+                            <td><span class="badge badge-medium">Moyenne</span></td>
+                        </tr>
+                        <tr>
+                            <td><a href="https://dotnetweekly.com/" class="source-link" target="_blank">.NET Weekly Newsletter</a></td>
+                            <td><span class="badge badge-community">Newsletter</span></td>
+                            <td>Hebdomadaire</td>
+                            <td>Curation hebdomadaire</td>
+                            <td><span class="badge badge-high">Haute</span></td>
+                        </tr>
+                        <tr>
+                            <td><a href="https://www.pluralsight.com/browse/software-development/csharp" class="source-link" target="_blank">Pluralsight .NET Courses</a></td>
+                            <td><span class="badge badge-community">Formation</span></td>
+                            <td>Mensuelle</td>
+                            <td>Cours approfondis</td>
+                            <td><span class="badge badge-medium">Moyenne</span></td>
+                        </tr>
+                        <tr>
+                            <td><a href="https://www.youtube.com/c/IAmTimCorey" class="source-link" target="_blank">Tim Corey YouTube</a></td>
+                            <td><span class="badge badge-community">Vidéo</span></td>
+                            <td>Hebdomadaire</td>
+                            <td>Tutoriels pratiques</td>
+                            <td><span class="badge badge-high">Haute</span></td>
+                        </tr>
+                        <tr>
+                            <td><a href="https://www.telerik.com/blogs/dotnet" class="source-link" target="_blank">Telerik .NET Blog</a></td>
+                            <td><span class="badge badge-community">Blog</span></td>
+                            <td>Hebdomadaire</td>
+                            <td>.NET, UI components</td>
+                            <td><span class="badge badge-medium">Moyenne</span></td>
+                        </tr>
+                        <tr>
+                            <td><a href="https://www.milanjovanovic.tech/" class="source-link" target="_blank">Milan Jovanović Newsletter</a></td>
+                            <td><span class="badge badge-community">Newsletter</span></td>
+                            <td>Hebdomadaire</td>
+                            <td>Architecture, patterns</td>
+                            <td><span class="badge badge-high">Haute</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Section 4: Influenceurs -->
+            <div class="section">
+                <h2 class="section-title">Influenceurs et Experts à Suivre</h2>
+                
+                <p style="margin-bottom: 20px; color: #555;">
+                    <strong>Plateformes recommandées :</strong> Twitter/X, LinkedIn, YouTube, GitHub
+                </p>
+
+                <div class="influencers-grid">
+                    <div class="influencer-card">
+                        <div class="influencer-header">
+                            <div class="influencer-avatar">SH</div>
+                            <div class="influencer-info">
+                                <h4>Scott Hanselman</h4>
+                                <p>@shanselman</p>
+                            </div>
+                        </div>
+                        <div class="influencer-specialties">
+                            <span class="specialty-tag">.NET</span>
+                            <span class="specialty-tag">Azure</span>
+                            <span class="specialty-tag">Productivité</span>
+                        </div>
+                        <p style="margin-top: 15px; color: #666; font-size: 0.9em;">
+                            Principal Program Manager chez Microsoft, podcasteur, expert .NET et Azure
+                        </p>
+                    </div>
+
+                    <div class="influencer-card">
+                        <div class="influencer-header">
+                            <div class="influencer-avatar">DT</div>
+                            <div class="influencer-info">
+                                <h4>David Fowler</h4>
+                                <p>@davidfowl</p>
+                            </div>
+                        </div>
+                        <div class="influencer-specialties">
+                            <span class="specialty-tag">ASP.NET Core</span>
+                            <span class="specialty-tag">SignalR</span>
+                            <span class="specialty-tag">Performance</span>
+                        </div>
+                        <p style="margin-top: 15px; color: #666; font-size: 0.9em;">
+                            Architecte principal ASP.NET Core, créateur de SignalR
+                        </p>
+                    </div>
+
+                    <div class="influencer-card">
+                        <div class="influencer-header">
+                            <div class="influencer-avatar">MA</div>
+                            <div class="influencer-info">
+                                <h4>Mads Torgersen</h4>
+                                <p>@madstorgersen</p>
+                            </div>
+                        </div>
+                        <div class="influencer-specialties">
+                            <span class="specialty-tag">C#</span>
+                            <span class="specialty-tag">Language Design</span>
+                        </div>
+                        <p style="margin-top: 15px; color: #666; font-size: 0.9em;">
+                            Lead Designer du langage C# chez Microsoft
+                        </p>
+                    </div>
+
+                    <div class="influencer-card">
+                        <div class="influencer-header">
+                            <div class="influencer-avatar">AL</div>
+                            <div class="influencer-info">
+                                <h4>Andrew Lock</h4>
+                                <p>@andrewlocknet</p>
+                            </div>
+                        </div>
+                        <div class="influencer-specialties">
+                            <span class="specialty-tag">ASP.NET Core</span>
+                            <span class="specialty-tag">Deep Dives</span>
+                        </div>
+                        <p style="margin-top: 15px; color: #666; font-size: 0.9em;">
+                            Auteur de "ASP.NET Core in Action", expert en internals .NET
+                        </p>
+                    </div>
+
+                    <div class="influencer-card">
+                        <div class="influencer-header">
+                            <div class="influencer-avatar">JC</div>
+                            <div class="influencer-info">
+                                <h4>Jon Skeet</h4>
+                                <p>@jonskeet</p>
+                            </div>
+                        </div>
+                        <div class="influencer-specialties">
+                            <span class="specialty-tag">C#</span>
+                            <span class="specialty-tag">StackOverflow</span>
+                        </div>
+                        <p style="margin-top: 15px; color: #666; font-size: 0.9em;">
+                            Auteur "C# in Depth", #1 contributeur StackOverflow, Google engineer
+                        </p>
+                    </div>
+
+                    <div class="influencer-card">
+                        <div class="influencer-header">
+                            <div class="influencer-avatar">SC</div>
+                            <div class="influencer-info">
+                                <h4>Stephen Cleary</h4>
+                                <p>@aStephenCleary</p>
+                            </div>
+                        </div>
+                        <div class="influencer-specialties">
+                            <span class="specialty-tag">Async/Await</span>
+                            <span class="specialty-tag">Concurrency</span>
+                        </div>
+                        <p style="margin-top: 15px; color: #666; font-size: 0.9em;">
+                            Expert en programmation asynchrone, auteur "Concurrency in C# Cookbook"
+                        </p>
+                    </div>
+
+                    <div class="influencer-card">
+                        <div class="influencer-header">
+                            <div class="influencer-avatar">DC</div>
+                            <div class="influencer-info">
+                                <h4>Derek Comartin</h4>
+                                <p>@codeopinion</p>
+                            </div>
+                        </div>
+                        <div class="influencer-specialties">
+                            <span class="specialty-tag">Architecture</span>
+                            <span class="specialty-tag">Microservices</span>
+                            <span class="specialty-tag">CQRS</span>
+                        </div>
+                        <p style="margin-top: 15px; color: #666; font-size: 0.9em;">
+                            CodeOpinion blog & YouTube, expert en architecture logicielle
+                        </p>
+                    </div>
+
+                    <div class="influencer-card">
+                        <div class="influencer-header">
+                            <div class="influencer-avatar">JB</div>
+                            <div class="influencer-info">
+                                <h4>Jimmy Bogard</h4>
+                                <p>@jbogard</p>
+                            </div>
+                        </div>
+                        <div class="influencer-specialties">
+                            <span class="specialty-tag">AutoMapper</span>
+                            <span class="specialty-tag">MediatR</span>
+                            <span class="specialty-tag">Architecture</span>
+                        </div>
+                        <p style="margin-top: 15px; color: #666; font-size: 0.9em;">
+                            Créateur d'AutoMapper et MediatR, expert en architecture d'entreprise
+                        </p>
+                    </div>
+
+                    <div class="influencer-card">
+                        <div class="influencer-header">
+                            <div class="influencer-avatar">MJ</div>
+                            <div class="influencer-info">
+                                <h4>Milan Jovanović</h4>
+                                <p>@mjovanovictech</p>
+                            </div>
+                        </div>
+                        <div class="influencer-specialties">
+                            <span class="specialty-tag">Clean Architecture</span>
+                            <span class="specialty-tag">DDD</span>
+                            <span class="specialty-tag">CQRS</span>
+                        </div>
+                        <p style="margin-top: 15px; color: #666; font-size: 0.9em;">
+                            Newsletter hebdomadaire sur l'architecture .NET moderne
+                        </p>
+                    </div>
+
+                    <div class="influencer-card">
+                        <div class="influencer-header">
+                            <div class="influencer-avatar">NH</div>
+                            <div class="influencer-info">
+                                <h4>Nick Chapsas</h4>
+                                <p>@nickchapsas</p>
+                            </div>
+                        </div>
+                        <div class="influencer-specialties">
+                            <span class="specialty-tag">YouTube</span>
+                            <span class="specialty-tag">Performance</span>
+                            <span class="specialty-tag">Best Practices</span>
+                        </div>
+                        <p style="margin-top: 15px; color: #666; font-size: 0.9em;">
+                            YouTubeur populaire, focus sur performance et bonnes pratiques .NET
+                        </p>
+                    </div>
+
+                    <div class="influencer-card">
+                        <div class="influencer-header">
+                            <div class="influencer-avatar">TC</div>
+                            <div class="influencer-info">
+                                <h4>Tim Corey</h4>
+                                <p>@IAmTimCorey</p>
+                            </div>
+                        </div>
+                        <div class="influencer-specialties">
+                            <span class="specialty-tag">Tutoriels</span>
+                            <span class="specialty-tag">Débutants</span>
+                            <span class="specialty-tag">Best Practices</span>
+                        </div>
+                        <p style="margin-top: 15px; color: #666; font-size: 0.9em;">
+                            Formateur .NET, YouTube channel avec 400K+ abonnés
+                        </p>
+                    </div>
+
+                    <div class="influencer-card">
+                        <div class="influencer-header">
+                            <div class="influencer-avatar">RG</div>
+                            <div class="influencer-info">
+                                <h4>Richard Campbell</h4>
+                                <p>@richcampbell</p>
+                            </div>
+                        </div>
+                        <div class="influencer-specialties">
+                            <span class="specialty-tag">.NET Rocks!</span>
+                            <span class="specialty-tag">Podcast</span>
+                        </div>
+                        <p style="margin-top: 15px; color: #666; font-size: 0.9em;">
+                            Co-host du podcast .NET Rocks! depuis 2002, Microsoft Regional Director
+                        </p>
+                    </div>
+
+                    <div class="influencer-card">
+                        <div class="influencer-header">
+                            <div class="influencer-avatar">JR</div>
+                            <div class="influencer-info">
+                                <h4>Julie Lerman</h4>
+                                <p>@julielerman</p>
+                            </div>
+                        </div>
+                        <div class="influencer-specialties">
+                            <span class="specialty-tag">Entity Framework</span>
+                            <span class="specialty-tag">Data Access</span>
+                        </div>
+                        <p style="margin-top: 15px; color: #666; font-size: 0.9em;">
+                            Experte Entity Framework, Microsoft MVP, Pluralsight author
+                        </p>
+                    </div>
+
+                    <div class="influencer-card">
+                        <div class="influencer-header">
+                            <div class="influencer-avatar">VK</div>
+                            <div class="influencer-info">
+                                <h4>Vladimir Khorikov</h4>
+                                <p>@vkhorikov</p>
+                            </div>
+                        </div>
+                        <div class="influencer-specialties">
+                            <span class="specialty-tag">DDD</span>
+                            <span class="specialty-tag">Clean Code</span>
+                            <span class="specialty-tag">Architecture</span>
+                        </div>
+                        <p style="margin-top: 15px; color: #666; font-size: 0.9em;">
+                            Auteur Pluralsight, expert en DDD et architecture d'entreprise
+                        </p>
+                    </div>
+
+                    <div class="influencer-card">
+                        <div class="influencer-header">
+                            <div class="influencer-avatar">DP</div>
+                            <div class="influencer-info">
+                                <h4>Damian Płaza</h4>
+                                <p>@damianplaza</p>
+                            </div>
+                        </div>
+                        <div class="influencer-specialties">
+                            <span class="specialty-tag">Modular Monolith</span>
+                            <span class="specialty-tag">Architecture</span>
+                        </div>
+                        <p style="margin-top: 15px; color: #666; font-size: 0.9em;">
+                            Expert en architecture modulaire, créateur de contenus techniques
+                        </p>
+                    </div>
+                </div>
+
+                <div style="background: #fff3e0; padding: 20px; border-radius: 10px; margin-top: 30px; border-left: 5px solid #FF9800;">
+                    <h4 style="color: #E65100; margin-bottom: 15px;">📱 Comptes de Réseaux Sociaux Recommandés</h4>
+                    <p style="margin-bottom: 10px;"><strong>Twitter/X :</strong> @dotnet, @aspnet, @code (VS Code), @VisualStudio</p>
+                    <p style="margin-bottom: 10px;"><strong>LinkedIn :</strong> Suivre les pages Microsoft .NET, .NET Foundation, ASP.NET</p>
+                    <p style="margin-bottom: 10px;"><strong>YouTube :</strong> .NET, Microsoft Developer, JetBrains, Pluralsight</p>
+                    <p><strong>GitHub :</strong> Suivre les repos dotnet/runtime, dotnet/aspnetcore, dotnet/roslyn</p>
+                </div>
+            </div>
+
+            <!-- Section 5: Organisation et Automatisation -->
+            <div class="section">
+                <h2 class="section-title">Organisation et Automatisation de la Veille</h2>
+
+                <div class="tech-grid">
+                    <div class="tech-card">
+                        <h3>🔧 Outils Recommandés</h3>
+                        <ul>
+                            <li><strong>Feedly :</strong> Agrégateur RSS pour centraliser tous les blogs</li>
+                            <li><strong>Inoreader :</strong> Alternative à Feedly avec plus de filtres</li>
+                            <li><strong>Pocket :</strong> Sauvegarder articles pour lecture ultérieure</li>
+                            <li><strong>Notion :</strong> Base de connaissances personnelle</li>
+                            <li><strong>Obsidian :</strong> Notes interconnectées (Zettelkasten)</li>
+                            <li><strong>Discord/Slack :</strong> Communautés .NET</li>
+                        </ul>
+                    </div>
+
+                    <div class="tech-card">
+                        <h3>⏰ Routine de Veille</h3>
+                        <ul>
+                            <li><strong>Quotidien (15 min) :</strong> Parcourir Feedly, Reddit, Twitter</li>
+                            <li><strong>Hebdo (1h) :</strong> Newsletters, articles approfondis</li>
+                            <li><strong>Mensuel (2h) :</strong> Regarder conférences, tester nouveautés</li>
+                            <li><strong>Trimestriel :</strong> Revoir sources, ajuster stratégie</li>
+                            <li><strong>Annuel :</strong> Grandes conférences (.NET Conf, Build)</li>
+                        </ul>
+                    </div>
+
+                    <div class="tech-card">
+                        <h3>📚 Méthode de Curation</h3>
+                        <ul>
+                            <li><strong>Triage :</strong> Rapide scan des titres (5 min)</li>
+                            <li><strong>Sauvegarde :</strong> Articles intéressants dans Pocket</li>
+                            <li><strong>Lecture :</strong> Approfondie avec prise de notes</li>
+                            <li><strong>Synthèse :</strong> Notes dans Notion/Obsidian</li>
+                            <li><strong>Pratique :</strong> Tester les concepts appris</li>
+                            <li><strong>Partage :</strong> Blog personnel ou discussions d'équipe</li>
+                        </ul>
+                    </div>
+
+                    <div class="tech-card">
+                        <h3>🎯 Filtres de Pertinence</h3>
+                        <ul>
+                            <li><strong>Applicable :</strong> Utilisable dans projets actuels/futurs</li>
+                            <li><strong>Nouveau :</strong> Technologies/patterns émergents</li>
+                            <li><strong>Fondamental :</strong> Concepts intemporels à maîtriser</li>
+                            <li><strong>Tendance :</strong> Ce que l'industrie adopte</li>
+                            <li><strong>Problème résolu :</strong> Solutions à mes défis</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div style="background: #e8f5e9; padding: 25px; border-radius: 15px; margin-top: 30px; border-left: 5px solid #4CAF50;">
+                    <h3 style="color: #2E7D32; margin-bottom: 15px;">✅ Checklist de Configuration</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px; margin-top: 15px;">
+                        <div>
+                            <p style="margin: 8px 0;">☑️ Créer compte Feedly/Inoreader</p>
+                            <p style="margin: 8px 0;">☑️ Ajouter les 25 sources RSS</p>
+                            <p style="margin: 8px 0;">☑️ Organiser en catégories</p>
+                            <p style="margin: 8px 0;">☑️ S'abonner aux newsletters</p>
+                        </div>
+                        <div>
+                            <p style="margin: 8px 0;">☑️ Suivre influenceurs sur Twitter/LinkedIn</p>
+                            <p style="margin: 8px 0;">☑️ S'abonner aux chaînes YouTube</p>
+                            <p style="margin: 8px 0;">☑️ Rejoindre Discord/Slack .NET</p>
+                            <p style="margin: 8px 0;">☑️ Configurer alertes Google</p>
+                        </div>
+                        <div>
+                            <p style="margin: 8px 0;">☑️ Installer Pocket pour lecture</p>
+                            <p style="margin: 8px 0;">☑️ Créer espace Notion/Obsidian</p>
+                            <p style="margin: 8px 0;">☑️ Définir créneaux de veille</p>
+                            <p style="margin: 8px 0;">☑️ Tester et ajuster après 1 mois</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 6: Justification des Choix -->
+            <div class="section">
+                <h2 class="section-title">Justification des Choix</h2>
+
+                <div class="criteria-box" style="background: #e3f2fd; border-left: 5px solid #1976D2;">
+                    <h3 style="color: #0D47A1;">🎓 Pourquoi 25 sources ?</h3>
+                    <ul>
+                        <li><strong>Équilibre :</strong> Suffisamment pour couvrir l'écosystème sans être submergé</li>
+                        <li><strong>Diversité :</strong> Mix sources officielles (40%), communauté (50%), entreprises (10%)</li>
+                        <li><strong>Formats variés :</strong> Blogs (12), vidéos (4), newsletters (3), forums (2), docs (2), podcasts (2)</li>
+                        <li><strong>Qualité > Quantité :</strong> Toutes les sources sont reconnues et fiables</li>
+                        <li><strong>Gérable :</strong> 30-60 min/jour pour rester à jour sans burnout</li>
+                    </ul>
+                </div>
+
+                <div class="criteria-box" style="background: #f3e5f5; border-left: 5px solid #7B1FA2;">
+                    <h3 style="color: #4A148C;">📌 Pertinence des thématiques</h3>
+                    <ul>
+                        <li><strong>Écosystème .NET :</strong> Cœur du métier, évolution rapide (nouvelles versions tous les ans)</li>
+                        <li><strong>Architecture :</strong> Compétence différenciante, demandée en entreprise</li>
+                        <li><strong>Cloud & DevOps :</strong> Indispensable pour déploiements modernes</li>
+                        <li><strong>Bases de données :</strong> Fondamental pour applications d'entreprise</li>
+                        <li><strong>Sécurité :</strong> Critique, souvent négligée, forte valeur ajoutée</li>
+                        <li><strong>Performance & Testing :</strong> Différenciation qualité du code</li>
+                    </ul>
+                </div>
+
+                <div class="criteria-box" style="background: #fff9c4; border-left: 5px solid #F57C00;">
+                    <h3 style="color: #E65100;">👥 Choix des influenceurs (15 sélectionnés)</h3>
+                    <ul>
+                        <li><strong>Microsoft Insiders :</strong> Accès aux roadmaps et décisions de design (Hanselman, Fowler, Torgersen)</li>
+                        <li><strong>Experts techniques :</strong> Contenus approfondis sur sujets spécifiques (Skeet, Cleary, Lock)</li>
+                        <li><strong>Architectes :</strong> Vision système et patterns d'entreprise (Bogard, Jovanović, Khorikov)</li>
+                        <li><strong>Éducateurs :</strong> Vulgarisation et apprentissage (Corey, Chapsas, Comartin)</li>
+                        <li><strong>Podcasters :</strong> Format audio pour veille en mobilité (Campbell, Lerman)</li>
+                        <li><strong>Diversité :</strong> Différents styles, niveaux et perspectives</li>
+                    </ul>
+                </div>
+
+                <div class="criteria-box" style="background: #ffebee; border-left: 5px solid #C62828;">
+                    <h3 style="color: #B71C1C;">⚠️ Sources volontairement exclues</h3>
+                    <ul>
+                        <li><strong>Blogs inactifs :</strong> Pas de mise à jour depuis 6+ mois</li>
+                        <li><strong>Contenus superficiels :</strong> Tutoriels basiques sans profondeur</li>
+                        <li><strong>Sources non-anglophones :</strong> Limitation linguistique (sauf excellence exceptionnelle)</li>
+                        <li><strong>Agrégateurs génériques :</strong> Trop de bruit, peu de signal (Medium, Dev.to)</li>
+                        <li><strong>Forums généralistes :</strong> Reddit/StackOverflow utilisés en recherche ponctuelle, pas en veille continue</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Section 7: Plan d'Action -->
+            <div class="section">
+                <h2 class="section-title">Plan d'Action et Suivi</h2>
+
+                <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; border-radius: 15px;">
+                    <h3 style="margin-bottom: 20px;">🚀 Démarrage Immédiat (Semaine 1)</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+                        <div style="background: rgba(255,255,255,0.1); padding: 20px; border-radius: 10px;">
+                            <h4 style="margin-bottom: 10px;">Jour 1-2 : Configuration</h4>
+                            <p>✓ Créer comptes (Feedly, Twitter/X, LinkedIn)</p>
+                            <p>✓ Ajouter sources RSS</p>
+                            <p>✓ S'abonner newsletters</p>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.1); padding: 20px; border-radius: 10px;">
+                            <h4 style="margin-bottom: 10px;">Jour 3-4 : Réseaux</h4>
+                            <p>✓ Suivre 15 influenceurs</p>
+                            <p>✓ S'abonner chaînes YouTube</p>
+                            <p>✓ Rejoindre communautés</p>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.1); padding: 20px; border-radius: 10px;">
+                            <h4 style="margin-bottom: 10px;">Jour 5-7 : Routine</h4>
+                            <p>✓ Tester routine quotidienne</p>
+                            <p>✓ Ajuster si nécessaire</p>
+                            <p>✓ Premiers articles sauvegardés</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 30px; background: white; padding: 25px; border-radius: 15px; border: 2px solid #512DA8;">
+                    <h3 style="color: #512DA8; margin-bottom: 15px;">📊 KPIs de Suivi de la Veille</h3>
+                    <ul style="list-style: none; padding: 0;">
+                        <li style="padding: 10px 0; border-bottom: 1px solid #eee;">📈 <strong>Articles lus par semaine :</strong> Objectif 10-15</li>
+                        <li style="padding: 10px 0; border-bottom: 1px solid #eee;">🎥 <strong>Vidéos regardées par mois :</strong> Objectif 8-12</li>
+                        <li style="padding: 10px 0; border-bottom: 1px solid #eee;">💡 <strong>Nouvelles technologies testées :</strong> Objectif 2 par mois</li>
+                        <li style="padding: 10px 0; border-bottom: 1px solid #eee;">📝 <strong>Notes prises :</strong> Objectif 1 synthèse par semaine</li>
+                        <li style="padding: 10px 0;">🔄 <strong>Révision de la veille :</strong> Mensuelle (ajustement sources)</li>
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+
+        <div style="background: #f8f9fa; padding: 30px; text-align: center; border-top: 3px solid #512DA8;">
+            <p style="color: #555; margin-bottom: 10px;">
+                <strong>Document créé pour :</strong> Exercice Veille Technologique - Enseignement .NET
+            </p>
+            <p style="color: #777; font-size: 0.9em;">
+                École Supérieure Polytechnique (ESP) - Département Génie Informatique
+            </p>
+            <p style="color: #999; font-size: 0.85em; margin-top: 10px;">
+                © 2026 - Mamadou Abdoul Hamid Diallo - Tous droits réservés
+            </p>
+        </div>
+    </div>
+</body>
+</html>
